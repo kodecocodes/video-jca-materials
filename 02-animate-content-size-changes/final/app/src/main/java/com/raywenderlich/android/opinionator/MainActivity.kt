@@ -44,7 +44,6 @@ import com.raywenderlich.android.opinionator.feed.FeedScreen
 class MainActivity : AppCompatActivity() {
 
   @ExperimentalPagerApi
-  @ExperimentalAnimationApi
   override fun onCreate(savedInstanceState: Bundle?) {
     // Switch to AppTheme for displaying the activity
     setTheme(R.style.AppTheme)

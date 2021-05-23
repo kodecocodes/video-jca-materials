@@ -34,6 +34,7 @@
 
 package com.raywenderlich.android.opinionator.feed
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -68,7 +69,7 @@ fun AddPost(onDoneClicked: (String) -> Unit) {
           style = TextStyle(Color.White, fontWeight = FontWeight.Bold),
           modifier = Modifier.padding(bottom = 8.dp)
       )
-      Card {
+      Card(modifier = Modifier.animateContentSize()) {
         TextField(
             value = postText,
             onValueChange = { value: String ->
