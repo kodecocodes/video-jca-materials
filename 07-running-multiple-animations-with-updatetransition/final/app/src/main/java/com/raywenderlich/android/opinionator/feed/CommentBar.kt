@@ -77,10 +77,7 @@ fun CommentBar(post: Post) {
           viewModel.postLiked(post)
         }
     )
-    Text(
-      text = "${post.likes}",
-      modifier = Modifier.padding(start = 4.dp)
-    )
+    LikeCount(post)
     Image(
       painter = painterResource(id = R.drawable.comment),
       contentDescription = "Comment",
@@ -90,5 +87,49 @@ fun CommentBar(post: Post) {
       colorFilter = ColorFilter.tint(Color.Black),
     )
     Text("${post.comments}", modifier = Modifier.padding(start = 4.dp))
+  }
+}
+
+private enum class LikeAnimationState {
+  Started,
+  Ended
+}
+
+@Composable
+private fun LikeCount(post: Post) {
+  val state = remember(post.likes) { MutableTransitionState(LikeAnimationState.Started) }
+  val previousLikeCount = remember { mutableStateOf(post.likes) }
+  state.targetState = LikeAnimationState.Ended
+  val transition = updateTransition(state, label = "Like Count Transition")
+  val translation by transition.animateDp(
+    label = "Translation",
+  ) { animationState ->
+    when (animationState) {
+      LikeAnimationState.Started -> 0.dp
+      LikeAnimationState.Ended -> (-15).dp
+    }
+  }
+  val translationPx = with(LocalDensity.current) { translation.toPx() }
+  val alpha by transition.animateFloat(
+    label = "Alpha"
+  ) { animationState ->
+    when (animationState) {
+      LikeAnimationState.Started -> 1f
+      LikeAnimationState.Ended -> 0f
+    }
+  }
+  if (transition.currentState == transition.targetState) {
+    previousLikeCount.value = post.likes
+  }
+  Box(modifier = Modifier.padding(start = 4.dp)) {
+    Text(text = "${post.likes}")
+    Text(
+      text = "${previousLikeCount.value}",
+      modifier = Modifier
+        .graphicsLayer(
+          translationY = translationPx,
+          alpha = alpha
+        )
+    )
   }
 }
