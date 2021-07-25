@@ -127,7 +127,8 @@ private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
   state.targetState = LikeAnimationState.Ended
   val transition = updateTransition(state, label = "Like Count Transition")
   val translation by transition.animateDp(
-    label = "Translation"
+    label = "Translation",
+    transitionSpec = { spring(stiffness = Spring.StiffnessLow) }
   ) { animationState ->
     when (animationState) {
       LikeAnimationState.Started -> 0.dp
@@ -136,7 +137,8 @@ private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
   }
   val translationPx = with(LocalDensity.current) { translation.toPx() }
   val alpha by transition.animateFloat(
-    label = "Alpha"
+    label = "Alpha",
+    transitionSpec = { spring(stiffness = Spring.StiffnessLow) }
   ) { animationState ->
     when (animationState) {
       LikeAnimationState.Started -> 1f
