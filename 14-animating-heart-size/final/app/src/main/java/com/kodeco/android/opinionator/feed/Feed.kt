@@ -171,10 +171,6 @@ private fun Post(post: Post) {
 private fun PostBody(post: Post) {
   val heartAnimationState = remember { mutableStateOf(HeartAnimationState.Hidden) }
 
-  if (heartAnimationState.value == HeartAnimationState.Shown) {
-    HeartImage(heartAnimationState)
-  }
-
   ElevatedCard(
       shape = RoundedCornerShape(4.dp),
       elevation = CardDefaults.elevatedCardElevation(8.dp),
@@ -193,6 +189,9 @@ private fun PostBody(post: Post) {
             }
         )
       }
+        if (heartAnimationState.value == HeartAnimationState.Shown) {
+            HeartImage(heartAnimationState)
+        }
     }
   }
 }
