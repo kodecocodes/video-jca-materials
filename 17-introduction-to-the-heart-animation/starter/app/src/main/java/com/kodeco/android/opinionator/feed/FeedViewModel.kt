@@ -41,7 +41,7 @@ import com.kodeco.android.opinionator.data.GetPostsUseCase
 import com.kodeco.android.opinionator.data.UpdatePostUseCase
 import com.kodeco.android.opinionator.models.Post
 import com.kodeco.android.opinionator.models.User
-import java.util.UUID
+import java.util.*
 
 class FeedViewModel : ViewModel() {
   private val getPostsUseCase = GetPostsUseCase()

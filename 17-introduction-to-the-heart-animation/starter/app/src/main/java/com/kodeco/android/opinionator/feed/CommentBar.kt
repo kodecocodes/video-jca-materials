@@ -70,10 +70,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kodeco.android.opinionator.R
 import com.kodeco.android.opinionator.models.Post
 import com.kodeco.android.opinionator.models.User
-import java.util.UUID
+import java.util.*
 
 @Composable
-fun CommentBar(post: Post) {
+fun CommentBar(
+    post: Post,
+    onPostLiked: () -> Unit
+) {
   val likeImage = if (post.hasBeenLiked) R.drawable.favorite else R.drawable.favorite_border
   val viewModel: FeedViewModel = viewModel()
   var changeColor by remember { mutableStateOf(false) }
@@ -99,6 +102,7 @@ fun CommentBar(post: Post) {
         modifier = Modifier
             .size(16.dp)
             .clickable {
+              onPostLiked()
               viewModel.postLiked(post)
             }
     )

@@ -34,7 +34,7 @@
 
 package com.kodeco.android.opinionator.models
 
-import java.util.UUID
+import java.util.*
 
 data class Post(
     val id: UUID,

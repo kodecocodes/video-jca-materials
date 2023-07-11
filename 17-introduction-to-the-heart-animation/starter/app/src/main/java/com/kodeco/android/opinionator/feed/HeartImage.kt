@@ -36,7 +36,6 @@ package com.kodeco.android.opinionator.feed
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -51,116 +50,74 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kodeco.android.opinionator.R
-
-enum class HeartAnimationState {
-  Hidden,
-  Shown
-}
-
-@Preview
-@Composable
-private fun HeartImagePreview() {
-  val state = remember { mutableStateOf(HeartAnimationState.Hidden) }
-
-  LaunchedEffect("LaunchAnimation") {
-    state.value = HeartAnimationState.Shown
-  }
-  Box(
-      contentAlignment = Alignment.Center,
-      modifier = Modifier.size(300.dp)
-  ) {
-    HeartImage(state)
-  }
-}
+import kotlinx.coroutines.delay
 
 @Composable
-fun HeartImage(state: MutableState<HeartAnimationState>) {
-  val transition = updateTransition(targetState = state.value, label = "")
+fun HeartImage(
+  heartAnimationState: MutableState<HeartAnimationState>
+) {
+  val transition = updateTransition(targetState = heartAnimationState.value, label = "Heart Transition")
+  if (transition.currentState == transition.targetState) {
+    heartAnimationState.value = HeartAnimationState.Hidden
+  }
+
   val heartSize by transition.animateDp(
-      label = "Size Animation",
-      transitionSpec = {
-        when {
-          HeartAnimationState.Shown isTransitioningTo HeartAnimationState.Hidden -> {
-            tween(durationMillis = 300)
-          }
-          else -> {
-            keyframes {
-              durationMillis = 1600
-              0.0.dp at 0 with FastOutSlowInEasing
-              130.dp at 400 with FastOutSlowInEasing
-              100.dp at 550 with FastOutSlowInEasing
-              100.dp at 900
-              130.dp at 1000 with FastOutSlowInEasing
-              100.dp at 1300 with FastOutSlowInEasing
-            }
+    label = "Size Animation",
+    transitionSpec = {
+      when {
+        HeartAnimationState.Shown isTransitioningTo HeartAnimationState.Hidden -> {
+          tween(durationMillis = 300)
+        }
+        else -> {
+          keyframes {
+            durationMillis = 1600
+            0.0.dp at 0 with FastOutSlowInEasing
+            130.dp at 400 with FastOutSlowInEasing
+            100.dp at 550 with FastOutSlowInEasing
+            100.dp at 900
+            130.dp at 1000 with FastOutSlowInEasing
+            100.dp at 1300 with FastOutSlowInEasing
           }
         }
-
       }
-  ) { heartAnimationState ->
-    when (heartAnimationState) {
+    }
+  ) { state ->
+    when (state) {
       HeartAnimationState.Hidden -> 0.dp
       HeartAnimationState.Shown -> 100.dp
     }
   }
 
-  val outlineRadiusSize by transition.animateDp(
-      label = "Outline Size Animation",
-      transitionSpec = {
-        tween(500)
-      }
-  ) { heartAnimationState ->
-    when (heartAnimationState) {
-      HeartAnimationState.Hidden -> 0.dp
-      HeartAnimationState.Shown -> 400.dp
-    }
-  }
+  Image(
+      painter = painterResource(id = R.drawable.favorite),
+      contentDescription = "Heart Animation",
+      colorFilter = ColorFilter.tint(Color.Red),
+      modifier = Modifier.size(heartSize)
+  )
+}
+enum class HeartAnimationState {
+  Hidden,
+  Shown
+}
 
-  val outlineAlpha by transition.animateFloat(
-      label = "Outline Alpha Animation",
-      transitionSpec = {
-        when {
-          HeartAnimationState.Hidden isTransitioningTo HeartAnimationState.Shown -> {
-            tween(700)
-          }
-          else -> tween(100)
-        }
-      }
-  ) { heartAnimationState ->
-    when (heartAnimationState) {
-      HeartAnimationState.Hidden -> 0.7f
-      HeartAnimationState.Shown -> 0f
-    }
-  }
 
-  if (transition.currentState == transition.targetState) {
-    state.value = HeartAnimationState.Hidden
+@Preview
+@Composable
+private fun HeartImagePreview() {
+  val state = remember { mutableStateOf(HeartAnimationState.Hidden) }
+  LaunchedEffect("LaunchAnimation") {
+    state.value = HeartAnimationState.Shown
   }
-
-  val radius = LocalDensity.current.run { outlineRadiusSize.toPx() }
-  Box(modifier = Modifier
-      .drawBehind {
-        if (transition.currentState != HeartAnimationState.Shown) {
-          val lightExplosionColor = 0XFFF0E68C
-          drawCircle(Color(lightExplosionColor), radius, alpha = outlineAlpha)
-        }
-      }
-      .size(heartSize)
+  Box(
+    contentAlignment = Alignment.Center,
+    modifier = Modifier.size(300.dp)
   ) {
-    Image(
-        painter = painterResource(id = R.drawable.favorite),
-        contentDescription = "Heart Animation",
-        colorFilter = ColorFilter.tint(Color.Red),
-        modifier = Modifier
-            .size(heartSize)
-    )
+    HeartImage(state)
   }
 }

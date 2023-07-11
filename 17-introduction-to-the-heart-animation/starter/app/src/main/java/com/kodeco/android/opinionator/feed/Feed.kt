@@ -121,8 +121,8 @@ private fun PopulatedFeed(posts: List<Post>) {
       LazyColumn(
           contentPadding = PaddingValues(horizontal = 16.dp),
           modifier = Modifier
-              .fillMaxWidth()
-              .padding(it)
+            .fillMaxWidth()
+            .padding(it)
       ) {
         item {
           TopAppBar(
@@ -152,8 +152,8 @@ private fun LoadingFeed() {
   Box(
       contentAlignment = Alignment.Center,
       modifier = Modifier
-          .fillMaxWidth()
-          .fillMaxHeight()) {
+        .fillMaxWidth()
+        .fillMaxHeight()) {
     CircularProgressIndicator()
   }
 }
@@ -169,18 +169,27 @@ private fun Post(post: Post) {
 
 @Composable
 private fun PostBody(post: Post) {
+  val heartAnimationState = remember { mutableStateOf(HeartAnimationState.Hidden) }
+
   ElevatedCard(
       shape = RoundedCornerShape(4.dp),
       elevation = CardDefaults.elevatedCardElevation(8.dp),
       modifier = Modifier.fillMaxWidth()) {
     Box(contentAlignment = Alignment.Center) {
       Column(modifier = Modifier
-          .padding(16.dp)
-          .fillMaxWidth()) {
+        .padding(16.dp)
+        .fillMaxWidth()) {
         Text(post.text)
         ImagePager(post.attachedImages)
-        CommentBar(post)
+        CommentBar(
+            post = post,
+            onPostLiked = {
+              heartAnimationState.value = if (post.hasBeenLiked) HeartAnimationState.Hidden else HeartAnimationState.Shown
+
+            }
+        )
       }
+      HeartImage(heartAnimationState = heartAnimationState)
     }
   }
 }
@@ -195,8 +204,8 @@ private fun ProfileItem(modifier: Modifier = Modifier, user: User) {
         contentScale = ContentScale.Crop,
         contentDescription = "Profile Image",
         modifier = modifier
-            .size(48.dp)
-            .shadow(8.dp, CircleShape)
+          .size(48.dp)
+          .shadow(8.dp, CircleShape)
     )
     Text(text = user.userName, modifier = Modifier.padding(start = 16.dp))
   }

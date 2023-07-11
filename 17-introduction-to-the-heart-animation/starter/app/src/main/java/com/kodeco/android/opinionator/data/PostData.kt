@@ -39,7 +39,7 @@ import com.kodeco.android.opinionator.models.Post
 import com.kodeco.android.opinionator.models.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.UUID
+import java.util.*
 
 object PostData {
   private val emily = User(R.drawable.emily, "Emily")
