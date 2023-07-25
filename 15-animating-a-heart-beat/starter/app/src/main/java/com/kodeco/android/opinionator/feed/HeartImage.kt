@@ -48,21 +48,19 @@ import com.kodeco.android.opinionator.R
 import kotlinx.coroutines.delay
 
 @Composable
-fun HeartImage(
-  heartAnimationState: MutableState<HeartAnimationState>
-) {
+fun HeartImage(heartAnimationState: MutableState<HeartAnimationState>) {
   LaunchedEffect(key1 = "ShowAnimation") {
     delay(2000)
     heartAnimationState.value = HeartAnimationState.Hidden
   }
-
   Image(
-      painter = painterResource(id = R.drawable.favorite),
-      contentDescription = "Heart Animation",
-      colorFilter = ColorFilter.tint(Color.Red),
-      modifier = Modifier.size(100.dp)
+    painter = painterResource(id = R.drawable.favorite),
+    contentDescription = "Heart Animation",
+    colorFilter = ColorFilter.tint(Color.Red),
+    modifier = Modifier.size(100.dp)
   )
 }
+
 enum class HeartAnimationState {
   Hidden,
   Shown

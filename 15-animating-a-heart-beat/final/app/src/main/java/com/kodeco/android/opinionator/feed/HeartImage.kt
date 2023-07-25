@@ -34,15 +34,11 @@
 
 package com.kodeco.android.opinionator.feed
 
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -52,40 +48,19 @@ import com.kodeco.android.opinionator.R
 import kotlinx.coroutines.delay
 
 @Composable
-fun HeartImage(
-  heartAnimationState: MutableState<HeartAnimationState>
-) {
-  val transition = updateTransition(targetState = heartAnimationState.value, label = "Heart Transition")
-  if (transition.currentState == transition.targetState) {
+fun HeartImage(heartAnimationState: MutableState<HeartAnimationState>) {
+  LaunchedEffect(key1 = "ShowAnimation") {
+    delay(2000)
     heartAnimationState.value = HeartAnimationState.Hidden
   }
-
-  val heartSize by transition.animateDp(
-    label = "Size Animation",
-    transitionSpec = {
-      when {
-        HeartAnimationState.Shown isTransitioningTo HeartAnimationState.Hidden -> {
-          tween(durationMillis = 300)
-        }
-        else -> {
-          tween(durationMillis = 1000)
-        }
-      }
-    }
-  ) { state ->
-    when (state) {
-      HeartAnimationState.Hidden -> 0.dp
-      HeartAnimationState.Shown -> 100.dp
-    }
-  }
-
   Image(
-      painter = painterResource(id = R.drawable.favorite),
-      contentDescription = "Heart Animation",
-      colorFilter = ColorFilter.tint(Color.Red),
-      modifier = Modifier.size(heartSize)
+    painter = painterResource(id = R.drawable.favorite),
+    contentDescription = "Heart Animation",
+    colorFilter = ColorFilter.tint(Color.Red),
+    modifier = Modifier.size(100.dp)
   )
 }
+
 enum class HeartAnimationState {
   Hidden,
   Shown
