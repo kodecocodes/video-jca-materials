@@ -36,6 +36,7 @@ package com.kodeco.android.opinionator.feed
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -50,8 +51,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -86,15 +89,51 @@ fun HeartImage(heartAnimationState: MutableState<HeartAnimationState>) {
       HeartAnimationState.Shown -> 100.dp
     }
   }
+  val outlineRadiusSize by transition.animateDp(
+    label = "Outline Size Animation",
+    transitionSpec = {
+      tween(500)
+    }
+  ) { heartAnimationState ->
+    when (heartAnimationState) {
+      HeartAnimationState.Hidden -> 0.dp
+      HeartAnimationState.Shown -> 400.dp
+    }
+  }
+
+  val radius = LocalDensity.current.run { outlineRadiusSize.toPx() }
+
+  val outlineAlpha by transition.animateFloat(
+    label = "Outline Alpha Animation",
+    transitionSpec = {
+      tween(700)
+    }
+  ) { state ->
+    when (state) {
+      HeartAnimationState.Hidden -> 0.7f
+      HeartAnimationState.Shown -> 0f
+    }
+  }
+
   if (transition.currentState == transition.targetState) {
     heartAnimationState.value = HeartAnimationState.Hidden
   }
-  Image(
-    painter = painterResource(id = R.drawable.favorite),
-    contentDescription = "Heart Animation",
-    colorFilter = ColorFilter.tint(Color.Red),
-    modifier = Modifier.size(heartSize)
-  )
+  Box(
+    modifier = Modifier
+      .drawBehind {
+        if (transition.currentState != HeartAnimationState.Shown) {
+          val lightExplosionColor = 0XFFF0E68C
+          drawCircle(Color(lightExplosionColor), radius, alpha = outlineAlpha)
+        }
+    }
+  ) {
+    Image(
+      painter = painterResource(id = R.drawable.favorite),
+      contentDescription = "Heart Animation",
+      colorFilter = ColorFilter.tint(Color.Red),
+      modifier = Modifier.size(heartSize)
+    )
+  }
 }
 
 enum class HeartAnimationState {
