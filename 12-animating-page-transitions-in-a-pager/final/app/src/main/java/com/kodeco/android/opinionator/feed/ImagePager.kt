@@ -38,54 +38,48 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.lerp
-import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImagePager(images: List<Int>) {
   if (images.isNotEmpty()) {
-    val pagerState = rememberPagerState {images.size}
+    val pagerState = rememberPagerState { images.size }
     Column {
       HorizontalPager(
-          state = pagerState,
-          modifier = Modifier
-              .fillMaxWidth()
-              .height(200.dp)
-              .padding(top = 16.dp)
+        state = pagerState,
+        modifier = Modifier
+          .fillMaxWidth()
+          .height(200.dp)
+          .padding(top = 16.dp)
       ) { page ->
-
         Image(
-            painter = painterResource(id = images[page]),
-            contentDescription = "Post Image $page",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .padding(8.dp)
-                .animatePageChange(pagerState)
+          painter = painterResource(id = images[page]),
+          contentDescription = "Post Image $page",
+          contentScale = ContentScale.Crop,
+          modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .padding(8.dp)
         )
       }
       Row(
-          Modifier
-              .height(20.dp)
-              .fillMaxWidth(),
-          horizontalArrangement = Arrangement.Center
+        Modifier
+          .height(20.dp)
+          .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
       ) {
         repeat(images.size) { iteration ->
           PagerIndicator(
-              color = if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+            color = if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
           )
         }
       }
@@ -96,26 +90,11 @@ fun ImagePager(images: List<Int>) {
 @Composable
 fun PagerIndicator(color: Color) {
   Box(
-      modifier = Modifier
-          .padding(4.dp)
-          .clip(CircleShape)
-          .background(color)
-          .size(10.dp)
+    modifier = Modifier
+      .padding(4.dp)
+      .clip(CircleShape)
+      .background(color)
+      .size(10.dp)
 
   )
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-private fun Modifier.animatePageChange(pagerState: PagerState): Modifier {
-  return  graphicsLayer {
-    val pageOffset = pagerState.currentPageOffsetFraction.absoluteValue
-    // We animate the scaleX + scaleY, between 85% and 100%
-    val scale = lerp(
-        start = 0.85f,
-        stop = 1f,
-        fraction = 1f - pageOffset
-    )
-    scaleX = scale
-    scaleY = scale
-  }
 }
