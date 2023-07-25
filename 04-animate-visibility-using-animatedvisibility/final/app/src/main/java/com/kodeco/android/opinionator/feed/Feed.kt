@@ -122,14 +122,13 @@ private fun PopulatedFeed(posts: List<Post>) {
           item { Post(post) }
         }
       }
-      if (isShowingPostInput) {
-        AddPost(
-          onDoneClicked = {
-            isShowingPostInput = false
-            viewModel.addPost(it)
-          }
-        )
-      }
+      AddPost(
+        show = isShowingPostInput,
+        onDoneClicked = {
+          isShowingPostInput = false
+          viewModel.addPost(it)
+        }
+      )
     }
   }
 }

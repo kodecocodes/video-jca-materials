@@ -34,7 +34,11 @@
 
 package com.kodeco.android.opinionator.feed
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,38 +66,52 @@ import androidx.compose.ui.unit.dp
 import com.kodeco.android.opinionator.theme.darkTransparent
 
 @Composable
-fun AddPost(onDoneClicked: (String) -> Unit) {
+fun AddPost(show: Boolean, onDoneClicked: (String) -> Unit) {
   Box(
-    contentAlignment = Alignment.Center,
-    modifier = Modifier
-      .fillMaxHeight()
-      .fillMaxWidth()
-      .background(darkTransparent)
-      .padding(horizontal = 16.dp)
+    contentAlignment = Alignment.Center
   ) {
-    var postText by remember { mutableStateOf("") }
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-      Text(
-        "Add your opinion here!",
-        style = TextStyle(Color.White, fontWeight = FontWeight.Bold),
-        modifier = Modifier.padding(bottom = 8.dp)
+    AnimatedVisibility(
+      visible = show,
+      enter = fadeIn(),
+      exit = fadeOut()
+    ) {
+      Box(
+        modifier = Modifier
+          .fillMaxHeight()
+          .fillMaxWidth()
+          .background(darkTransparent)
+          .padding(horizontal = 16.dp)
       )
-      Card {
-        TextField(
-          value = postText,
-          onValueChange = { value: String ->
-            postText = value
-          },
-          keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-          keyboardActions = KeyboardActions(onDone = {
-            onDoneClicked(postText)
-          }),
-          modifier = Modifier
-            .background(Color.White)
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = 50.dp)
-            .animateContentSize()
+    }
+    AnimatedVisibility(
+      visible = show,
+      enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+      exit = fadeOut()
+    ) {
+      var postText by remember { mutableStateOf("") }
+      Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Text(
+          "Add your opinion here!",
+          style = TextStyle(Color.White, fontWeight = FontWeight.Bold),
+          modifier = Modifier.padding(bottom = 8.dp)
         )
+        Card {
+          TextField(
+            value = postText,
+            onValueChange = { value: String ->
+              postText = value
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {
+              onDoneClicked(postText)
+            }),
+            modifier = Modifier
+              .background(Color.White)
+              .fillMaxWidth()
+              .defaultMinSize(minHeight = 50.dp)
+              .animateContentSize()
+          )
+        }
       }
     }
   }
