@@ -74,8 +74,8 @@ private fun HeartImagePreview() {
     state.value = HeartAnimationState.Shown
   }
   Box(
-      contentAlignment = Alignment.Center,
-      modifier = Modifier.size(300.dp)
+    contentAlignment = Alignment.Center,
+    modifier = Modifier.size(300.dp)
   ) {
     HeartImage(state)
   }
@@ -85,26 +85,27 @@ private fun HeartImagePreview() {
 fun HeartImage(state: MutableState<HeartAnimationState>) {
   val transition = updateTransition(targetState = state.value, label = "")
   val heartSize by transition.animateDp(
-      label = "Size Animation",
-      transitionSpec = {
-        when {
-          HeartAnimationState.Shown isTransitioningTo HeartAnimationState.Hidden -> {
-            tween(durationMillis = 300)
-          }
-          else -> {
-            keyframes {
-              durationMillis = 1600
-              0.0.dp at 0 with FastOutSlowInEasing
-              130.dp at 400 with FastOutSlowInEasing
-              100.dp at 550 with FastOutSlowInEasing
-              100.dp at 900
-              130.dp at 1000 with FastOutSlowInEasing
-              100.dp at 1300 with FastOutSlowInEasing
-            }
-          }
+    label = "Size Animation",
+    transitionSpec = {
+      when {
+        HeartAnimationState.Shown isTransitioningTo HeartAnimationState.Hidden -> {
+          tween(durationMillis = 300)
         }
 
+        else -> {
+          keyframes {
+            durationMillis = 1600
+            0.0.dp at 0 with FastOutSlowInEasing
+            130.dp at 400 with FastOutSlowInEasing
+            100.dp at 550 with FastOutSlowInEasing
+            100.dp at 900
+            130.dp at 1000 with FastOutSlowInEasing
+            100.dp at 1300 with FastOutSlowInEasing
+          }
+        }
       }
+
+    }
   ) { heartAnimationState ->
     when (heartAnimationState) {
       HeartAnimationState.Hidden -> 0.dp
@@ -113,10 +114,10 @@ fun HeartImage(state: MutableState<HeartAnimationState>) {
   }
 
   val outlineRadiusSize by transition.animateDp(
-      label = "Outline Size Animation",
-      transitionSpec = {
-        tween(500)
-      }
+    label = "Outline Size Animation",
+    transitionSpec = {
+      tween(500)
+    }
   ) { heartAnimationState ->
     when (heartAnimationState) {
       HeartAnimationState.Hidden -> 0.dp
@@ -125,15 +126,16 @@ fun HeartImage(state: MutableState<HeartAnimationState>) {
   }
 
   val outlineAlpha by transition.animateFloat(
-      label = "Outline Alpha Animation",
-      transitionSpec = {
-        when {
-          HeartAnimationState.Hidden isTransitioningTo HeartAnimationState.Shown -> {
-            tween(700)
-          }
-          else -> tween(100)
+    label = "Outline Alpha Animation",
+    transitionSpec = {
+      when {
+        HeartAnimationState.Hidden isTransitioningTo HeartAnimationState.Shown -> {
+          tween(700)
         }
+
+        else -> tween(100)
       }
+    }
   ) { heartAnimationState ->
     when (heartAnimationState) {
       HeartAnimationState.Hidden -> 0.7f
@@ -147,20 +149,20 @@ fun HeartImage(state: MutableState<HeartAnimationState>) {
 
   val radius = LocalDensity.current.run { outlineRadiusSize.toPx() }
   Box(modifier = Modifier
-      .drawBehind {
-        if (transition.currentState != HeartAnimationState.Shown) {
-          val lightExplosionColor = 0XFFF0E68C
-          drawCircle(Color(lightExplosionColor), radius, alpha = outlineAlpha)
-        }
+    .drawBehind {
+      if (transition.currentState != HeartAnimationState.Shown) {
+        val lightExplosionColor = 0XFFF0E68C
+        drawCircle(Color(lightExplosionColor), radius, alpha = outlineAlpha)
       }
-      .size(heartSize)
+    }
+    .size(heartSize)
   ) {
     Image(
-        painter = painterResource(id = R.drawable.favorite),
-        contentDescription = "Heart Animation",
-        colorFilter = ColorFilter.tint(Color.Red),
-        modifier = Modifier
-            .size(heartSize)
+      painter = painterResource(id = R.drawable.favorite),
+      contentDescription = "Heart Animation",
+      colorFilter = ColorFilter.tint(Color.Red),
+      modifier = Modifier
+        .size(heartSize)
     )
   }
 }
