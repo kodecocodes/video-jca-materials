@@ -37,11 +37,11 @@ package com.kodeco.android.opinionator.models
 import java.util.UUID
 
 data class Post(
-    val id: UUID,
-    val text: String,
-    val user: User,
-    val likes: Int,
-    val comments: Int,
-    val hasBeenLiked: Boolean,
-    val attachedImages: List<Int> = emptyList()
+  val id: UUID,
+  val text: String,
+  val user: User,
+  val likes: Int,
+  val comments: Int,
+  val hasBeenLiked: Boolean,
+  val attachedImages: List<Int> = emptyList()
 )
