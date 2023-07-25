@@ -56,17 +56,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kodeco.android.opinionator.R
-import kotlinx.coroutines.delay
 
 @Composable
-fun HeartImage(
-  heartAnimationState: MutableState<HeartAnimationState>
-) {
+fun HeartImage(heartAnimationState: MutableState<HeartAnimationState>) {
   val transition = updateTransition(targetState = heartAnimationState.value, label = "Heart Transition")
-  if (transition.currentState == transition.targetState) {
-    heartAnimationState.value = HeartAnimationState.Hidden
-  }
-
   val heartSize by transition.animateDp(
     label = "Size Animation",
     transitionSpec = {
@@ -93,19 +86,21 @@ fun HeartImage(
       HeartAnimationState.Shown -> 100.dp
     }
   }
-
+  if (transition.currentState == transition.targetState) {
+    heartAnimationState.value = HeartAnimationState.Hidden
+  }
   Image(
-      painter = painterResource(id = R.drawable.favorite),
-      contentDescription = "Heart Animation",
-      colorFilter = ColorFilter.tint(Color.Red),
-      modifier = Modifier.size(heartSize)
+    painter = painterResource(id = R.drawable.favorite),
+    contentDescription = "Heart Animation",
+    colorFilter = ColorFilter.tint(Color.Red),
+    modifier = Modifier.size(heartSize)
   )
 }
+
 enum class HeartAnimationState {
   Hidden,
   Shown
 }
-
 
 @Preview
 @Composable

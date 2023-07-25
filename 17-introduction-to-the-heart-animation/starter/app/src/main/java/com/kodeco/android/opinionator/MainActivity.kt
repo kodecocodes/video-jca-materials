@@ -50,4 +50,9 @@ class MainActivity : AppCompatActivity() {
       }
     }
   }
+
+  enum class BoxState {
+    Shrunk,
+    Expanded
+  }
 }

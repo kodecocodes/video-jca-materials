@@ -35,30 +35,77 @@
 package com.kodeco.android.opinionator.feed
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.kodeco.android.opinionator.R
-import com.kodeco.android.opinionator.data.CreatePostUseCase
-import com.kodeco.android.opinionator.data.GetPostsUseCase
-import com.kodeco.android.opinionator.data.UpdatePostUseCase
+import com.kodeco.android.opinionator.data.PostsRepository
+import com.kodeco.android.opinionator.data.PostsRepositoryImpl
 import com.kodeco.android.opinionator.models.Post
 import com.kodeco.android.opinionator.models.User
-import java.util.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.util.UUID
 
 class FeedViewModel : ViewModel() {
-  private val getPostsUseCase = GetPostsUseCase()
-  private val updatePostsUseCase = UpdatePostUseCase()
-  private val createPostUseCase = CreatePostUseCase()
+  private val postsRepository: PostsRepository = PostsRepositoryImpl()
+  val uiState = MutableStateFlow(PostsUIState())
 
-  val posts = getPostsUseCase.getPosts()
+  init {
+    getPostLoadingState()
+  }
 
   fun postLiked(post: Post) {
-    val postIsLiked = !post.hasBeenLiked
-    val newLikeCount = if (postIsLiked) post.likes + 1 else post.likes - 1
-    val newPost = post.copy(hasBeenLiked = postIsLiked, likes = newLikeCount)
-    updatePostsUseCase.updatePost(newPost)
+    viewModelScope.launch {
+      val postIsLiked = !post.hasBeenLiked
+      val newLikeCount = if (postIsLiked) post.likes + 1 else post.likes - 1
+      val newPost = post.copy(hasBeenLiked = postIsLiked, likes = newLikeCount)
+      postsRepository.updatePost(newPost)
+      uiState.update {
+        it.copy(
+          isLoading = false,
+          feedScreenShowing = FeedScreenShowing.Feed,
+          posts = postsRepository.getPosts()
+        )
+      }
+    }
   }
 
   fun addPost(postText: String) {
-    val post = Post(UUID.randomUUID(), postText, User(R.drawable.person, "You"), 0, 0, false)
-    createPostUseCase.createPost(post)
+    viewModelScope.launch {
+      val post = Post(UUID.randomUUID(), postText, User(R.drawable.person, "You"), 0, 0, false)
+      postsRepository.createPost(post)
+      uiState.update {
+        it.copy(
+          isLoading = false,
+          feedScreenShowing = FeedScreenShowing.Feed,
+          posts = postsRepository.getPosts()
+        )
+      }
+    }
+  }
+
+  private fun getPostLoadingState() {
+    viewModelScope.launch {
+      uiState.update {
+        it.copy(
+          isLoading = true,
+          feedScreenShowing = FeedScreenShowing.Loading,
+        )
+      }
+    }
+  }
+
+  fun getPosts() {
+    viewModelScope.launch {
+      delay(1000)
+      uiState.update {
+        it.copy(
+          posts = postsRepository.getPosts(),
+          feedScreenShowing = FeedScreenShowing.Feed,
+          isLoading = false
+        )
+      }
+    }
   }
 }
