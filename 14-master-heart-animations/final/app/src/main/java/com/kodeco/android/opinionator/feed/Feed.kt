@@ -75,6 +75,7 @@ enum class FeedScreenShowing {
   Loading,
   Feed
 }
+
 @Composable
 private fun Feed() {
   val viewModel = viewModel<FeedViewModel>()
@@ -164,6 +165,7 @@ private fun Post(post: Post) {
 
 @Composable
 private fun PostBody(post: Post) {
+  val heartAnimationState = remember { mutableStateOf(HeartAnimationState.Hidden) }
   ElevatedCard(
     shape = RoundedCornerShape(4.dp),
     elevation = CardDefaults.elevatedCardElevation(8.dp),
@@ -177,7 +179,16 @@ private fun PostBody(post: Post) {
       ) {
         Text(post.text)
         ImagePager(post.attachedImages)
-        CommentBar(post)
+        CommentBar(
+          post = post,
+          onPostLiked = {
+            heartAnimationState.value =
+              if (post.hasBeenLiked) HeartAnimationState.Hidden else HeartAnimationState.Shown
+          }
+        )
+      }
+      if (heartAnimationState.value == HeartAnimationState.Shown) {
+        HeartImage(heartAnimationState)
       }
     }
   }
