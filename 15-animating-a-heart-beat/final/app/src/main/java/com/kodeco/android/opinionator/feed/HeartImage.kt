@@ -34,30 +34,50 @@
 
 package com.kodeco.android.opinionator.feed
 
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kodeco.android.opinionator.R
-import kotlinx.coroutines.delay
 
 @Composable
 fun HeartImage(heartAnimationState: MutableState<HeartAnimationState>) {
-  LaunchedEffect(key1 = "ShowAnimation") {
-    delay(2000)
+  val transition = updateTransition(targetState = heartAnimationState.value, label = "Heart Transition")
+  val heartSize by transition.animateDp(
+    label = "Size Animation",
+    transitionSpec = {
+      when {
+        HeartAnimationState.Shown isTransitioningTo HeartAnimationState.Hidden -> {
+          tween(durationMillis = 300)
+        }
+        else -> {
+          tween(durationMillis = 1000)
+        }
+      }
+    }
+  ) { state ->
+    when (state) {
+      HeartAnimationState.Hidden -> 0.dp
+      HeartAnimationState.Shown -> 100.dp
+    }
+  }
+  if (transition.currentState == transition.targetState) {
     heartAnimationState.value = HeartAnimationState.Hidden
   }
   Image(
     painter = painterResource(id = R.drawable.favorite),
     contentDescription = "Heart Animation",
     colorFilter = ColorFilter.tint(Color.Red),
-    modifier = Modifier.size(100.dp)
+    modifier = Modifier.size(heartSize)
   )
 }
 

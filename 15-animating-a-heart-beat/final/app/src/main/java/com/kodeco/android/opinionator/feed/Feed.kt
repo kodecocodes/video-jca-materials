@@ -187,9 +187,7 @@ private fun PostBody(post: Post) {
           }
         )
       }
-      if (heartAnimationState.value == HeartAnimationState.Shown) {
-        HeartImage(heartAnimationState)
-      }
+      HeartImage(heartAnimationState)
     }
   }
 }
