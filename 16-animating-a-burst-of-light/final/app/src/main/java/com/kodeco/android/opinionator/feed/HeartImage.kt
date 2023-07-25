@@ -34,18 +34,26 @@
 
 package com.kodeco.android.opinionator.feed
 
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kodeco.android.opinionator.R
 
@@ -60,7 +68,15 @@ fun HeartImage(heartAnimationState: MutableState<HeartAnimationState>) {
           tween(durationMillis = 300)
         }
         else -> {
-          tween(durationMillis = 1000)
+          keyframes {
+            durationMillis = 1600
+            0.0.dp at 0 with FastOutSlowInEasing
+            130.dp at 400 with FastOutSlowInEasing
+            100.dp at 550 with FastOutSlowInEasing
+            100.dp at 900
+            130.dp at 1000 with FastOutSlowInEasing
+            100.dp at 1300 with FastOutSlowInEasing
+          }
         }
       }
     }
@@ -84,4 +100,19 @@ fun HeartImage(heartAnimationState: MutableState<HeartAnimationState>) {
 enum class HeartAnimationState {
   Hidden,
   Shown
+}
+
+@Preview
+@Composable
+private fun HeartImagePreview() {
+  val state = remember { mutableStateOf(HeartAnimationState.Hidden) }
+  LaunchedEffect("LaunchAnimation") {
+    state.value = HeartAnimationState.Shown
+  }
+  Box(
+    contentAlignment = Alignment.Center,
+    modifier = Modifier.size(300.dp)
+  ) {
+    HeartImage(state)
+  }
 }
