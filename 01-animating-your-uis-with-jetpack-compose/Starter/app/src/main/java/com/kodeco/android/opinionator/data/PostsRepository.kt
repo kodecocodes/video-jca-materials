@@ -34,20 +34,30 @@
 
 package com.kodeco.android.opinionator.data
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
+import com.kodeco.android.opinionator.models.Post
 
-class GetPostsUseCase {
-  fun getPosts(): Flow<PostLoadingState> {
-    return PostData.postsFlow
-        .map {
-          PostLoadingState.Populated(it) as PostLoadingState
-        }
-        .onStart {
-          emit(PostLoadingState.Loading)
-          delay(2500)
-        }
+interface PostsRepository {
+  fun createPost(post: Post)
+  fun getPosts(): List<Post>
+  fun updatePost(newPost: Post)
+}
+
+class PostsRepositoryImpl : PostsRepository {
+  override fun createPost(post: Post) {
+    PostData.posts = listOf(post) + PostData.posts
+  }
+
+  override fun getPosts(): List<Post> {
+    return PostData.posts
+  }
+
+  override fun updatePost(newPost: Post) {
+    PostData.posts = PostData.posts.map { post ->
+      if (post.id == newPost.id) {
+        newPost
+      } else {
+        post
+      }
+    }
   }
 }
