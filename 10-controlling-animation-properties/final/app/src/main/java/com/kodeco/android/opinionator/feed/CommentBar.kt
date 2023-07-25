@@ -37,8 +37,10 @@ package com.kodeco.android.opinionator.feed
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
@@ -143,6 +145,7 @@ private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
   val transition = updateTransition(state, label = "Like Count Transition")
   val translation by transition.animateDp(
     label = "Translation",
+    transitionSpec = { spring(stiffness = Spring.StiffnessLow) }
   ) { animationState ->
     when (animationState) {
       LikeAnimationState.Started -> 0.dp
@@ -152,6 +155,7 @@ private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
   val translationPx = with(LocalDensity.current) { translation.toPx() }
   val alpha by transition.animateFloat(
     label = "Alpha",
+    transitionSpec = { spring(stiffness = Spring.StiffnessLow) }
   ) { animationState ->
     when (animationState) {
       LikeAnimationState.Started -> 1f
