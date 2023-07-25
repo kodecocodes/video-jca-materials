@@ -47,10 +47,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -64,13 +62,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kodeco.android.opinionator.R
 import com.kodeco.android.opinionator.models.Post
-import com.kodeco.android.opinionator.models.User
-import java.util.UUID
 
 @Composable
 fun CommentBar(post: Post) {
@@ -81,38 +76,39 @@ fun CommentBar(post: Post) {
   val endColor = Color.Green
 
   val backgroundColor by animateColorAsState(
-      targetValue = if (changeColor) endColor else startColor,
-      animationSpec = tween(
-          durationMillis = 2000,
-          delayMillis = 10,
-          easing = LinearEasing
-      )
+    targetValue = if (changeColor) endColor else startColor,
+    animationSpec = tween(
+      durationMillis = 2000,
+      delayMillis = 10,
+      easing = LinearEasing
+    )
   )
 
   Row(
-      verticalAlignment = Alignment.CenterVertically,
-      modifier = Modifier.padding(top = 8.dp)) {
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = Modifier.padding(top = 8.dp)
+  ) {
     Image(
-        painter = painterResource(id = likeImage),
-        contentDescription = "Favorite",
-        colorFilter = ColorFilter.tint(Color.Black),
-        modifier = Modifier
-            .size(16.dp)
-            .clickable {
-              viewModel.postLiked(post)
-            }
+      painter = painterResource(id = likeImage),
+      contentDescription = "Favorite",
+      colorFilter = ColorFilter.tint(Color.Black),
+      modifier = Modifier
+        .size(16.dp)
+        .clickable {
+          viewModel.postLiked(post)
+        }
     )
     LikeCount(post = post)
     Image(
-        painter = painterResource(id = R.drawable.comment),
-        contentDescription = "Comment",
-        modifier = Modifier
-            .padding(start = 16.dp)
-            .size(16.dp)
-            .clickable {
-              changeColor = !changeColor
-            },
-        colorFilter = ColorFilter.tint(backgroundColor),
+      painter = painterResource(id = R.drawable.comment),
+      contentDescription = "Comment",
+      modifier = Modifier
+        .padding(start = 16.dp)
+        .size(16.dp)
+        .clickable {
+          changeColor = !changeColor
+        },
+      colorFilter = ColorFilter.tint(backgroundColor),
     )
     Text("${post.comments}", modifier = Modifier.padding(start = 4.dp))
   }
@@ -120,37 +116,26 @@ fun CommentBar(post: Post) {
 
 @Composable
 private fun LikeCount(post: Post) {
-  val previousLikeCount = remember { mutableStateOf(post.likes) }
   val likeCountAnimation = useLikeCountAnimation(likes = post.likes)
+  val previousLikeCount = remember { mutableStateOf(post.likes) }
   if (likeCountAnimation.finished) {
     previousLikeCount.value = post.likes
   }
   Box(modifier = Modifier.padding(start = 4.dp)) {
     Text(
-        text = "${post.likes}",
-        modifier = Modifier
+      text = "${post.likes}",
+      modifier = Modifier
     )
     Text(
-        text = "${previousLikeCount.value}",
-        modifier = Modifier
-            .graphicsLayer(
-                translationY = likeCountAnimation.translation,
-                alpha = likeCountAnimation.alpha
-            )
+      text = "${previousLikeCount.value}",
+      modifier = Modifier
+        .graphicsLayer(
+          translationY = likeCountAnimation.translation,
+          alpha = likeCountAnimation.alpha
+        )
     )
   }
 }
-
-private enum class LikeAnimationState {
-  Started,
-  Ended
-}
-
-data class LikeCountAnimation(
-    val alpha: Float,
-    val translation: Float,
-    val finished: Boolean
-)
 
 @Composable
 private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
@@ -159,8 +144,8 @@ private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
 
   val transition = updateTransition(state, label = "Like Count Transition")
   val translation by transition.animateDp(
-      label = "Translation",
-      transitionSpec = { spring(stiffness = Spring.StiffnessLow) }
+    label = "Translation",
+    transitionSpec = { spring(stiffness = Spring.StiffnessLow) }
   ) { animationState ->
     when (animationState) {
       LikeAnimationState.Started -> 0.dp
@@ -169,35 +154,26 @@ private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
   }
   val translationPx = with(LocalDensity.current) { translation.toPx() }
   val alpha by transition.animateFloat(
-      label = "Alpha",
-      transitionSpec = { spring(stiffness = Spring.StiffnessLow) }
+    label = "Alpha",
+    transitionSpec = { spring(stiffness = Spring.StiffnessLow) }
   ) { animationState ->
     when (animationState) {
       LikeAnimationState.Started -> 1f
       LikeAnimationState.Ended -> 0.0f
     }
   }
+
   val isFinished = transition.currentState == transition.targetState
   return LikeCountAnimation(alpha, translationPx, isFinished)
 }
 
-val post = Post(
-    UUID.randomUUID(),
-    "Test",
-    User(R.drawable.default_account, "Test"),
-    100,
-    100,
-    false
-)
+private enum class LikeAnimationState {
+  Started,
+  Ended
+}
 
-@Preview
-@Composable
-private fun LikeCountPreview() {
-  Box(
-      contentAlignment = Alignment.Center,
-      modifier = Modifier
-          .width(200.dp)
-          .height(200.dp)
-  ) {
-    LikeCount(post)
-  }}
+data class LikeCountAnimation(
+  val alpha: Float,
+  val translation: Float,
+  val finished: Boolean
+)
