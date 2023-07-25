@@ -37,19 +37,6 @@ package com.kodeco.android.opinionator
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.kodeco.android.opinionator.feed.FeedScreen
 import com.kodeco.android.opinionator.theme.OpinionatorTheme
 
@@ -58,40 +45,9 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
-      var boxState = remember { mutableStateOf(BoxState.Shrunk) }
-      val transition = updateTransition(boxState, "Box Transition")
-
-      val size = transition.animateDp(label = "Size Transition") { state ->
-        when (state.value) {
-          BoxState.Shrunk -> 100.dp
-          BoxState.Expanded -> 300.dp
-        }
+      OpinionatorTheme {
+        FeedScreen()
       }
-
-      val color = transition.animateColor(label = "Color Transition") { state ->
-        when (state.value) {
-          BoxState.Shrunk -> Color.Cyan
-          BoxState.Expanded -> Color.Red
-        }
-      }
-
-      Box(
-          modifier = Modifier
-              .width(size.value)
-              .height(size.value)
-              .background(color.value)
-              .clickable {
-                boxState.value = when(boxState.value)
-                {
-                  BoxState.Shrunk -> BoxState.Expanded
-                  BoxState.Expanded -> BoxState.Shrunk
-                }
-              }
-      )
     }
   }
-}
-enum class BoxState {
-  Shrunk,
-  Expanded
 }
