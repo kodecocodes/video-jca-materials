@@ -32,22 +32,12 @@
  * THE SOFTWARE.
  */
 
-package com.kodeco.android.opinionator.data
+package com.kodeco.android.opinionator.feed
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
+import com.kodeco.android.opinionator.models.Post
 
-class GetPostsUseCase {
-  fun getPosts(): Flow<PostLoadingState> {
-    return PostData.postsFlow
-        .map {
-          PostLoadingState.Populated(it) as PostLoadingState
-        }
-        .onStart {
-          emit(PostLoadingState.Loading)
-          delay(2500)
-        }
-  }
-}
+data class PostsUIState(
+  val isLoading: Boolean = false,
+  val posts: List<Post> = emptyList(),
+  val feedScreenShowing: FeedScreenShowing = FeedScreenShowing.Loading
+)

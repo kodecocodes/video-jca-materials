@@ -36,8 +36,28 @@ package com.kodeco.android.opinionator.data
 
 import com.kodeco.android.opinionator.models.Post
 
-class CreatePostUseCase {
-  fun createPost(post: Post) {
+interface PostsRepository {
+  fun createPost(post: Post)
+  fun getPosts(): List<Post>
+  fun updatePost(newPost: Post)
+}
+
+class PostsRepositoryImpl : PostsRepository {
+  override fun createPost(post: Post) {
     PostData.posts = listOf(post) + PostData.posts
+  }
+
+  override fun getPosts(): List<Post> {
+    return PostData.posts
+  }
+
+  override fun updatePost(newPost: Post) {
+    PostData.posts = PostData.posts.map { post ->
+      if (post.id == newPost.id) {
+        newPost
+      } else {
+        post
+      }
+    }
   }
 }
