@@ -34,20 +34,13 @@
 package com.kodeco.android.opinionator.feed
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,16 +55,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kodeco.android.opinionator.R
-import com.kodeco.android.opinionator.data.PostLoadingState
 import com.kodeco.android.opinionator.models.Post
 import com.kodeco.android.opinionator.models.User
 
@@ -84,11 +72,12 @@ fun FeedScreen() {
 @Composable
 private fun Feed() {
   val viewModel = viewModel<FeedViewModel>()
-  val postLoadingState by viewModel.posts.collectAsState(initial = PostLoadingState.Loading)
-  when (postLoadingState) {
-    PostLoadingState.Loading -> LoadingFeed()
-    is PostLoadingState.Populated -> PopulatedFeed(
-        posts = (postLoadingState as PostLoadingState.Populated).posts)
+  val uiState by viewModel.uiState.collectAsState()
+  viewModel.getPosts()
+  if (uiState.isLoading) {
+    LoadingFeed()
+  } else {
+    PopulatedFeed(uiState.posts)
   }
 }
 
@@ -100,30 +89,30 @@ private fun PopulatedFeed(posts: List<Post>) {
   val viewModel: FeedViewModel = viewModel()
 
   Scaffold(
-      floatingActionButton = {
-        FloatingActionButton(
-            onClick = { isShowingPostInput = !isShowingPostInput },
-        ) {
-          Icon(
-              painter = painterResource(id = addPostIcon),
-              contentDescription = "Add Post"
-          )
-        }
+    floatingActionButton = {
+      FloatingActionButton(
+        onClick = { isShowingPostInput = !isShowingPostInput },
+      ) {
+        Icon(
+          painter = painterResource(id = addPostIcon),
+          contentDescription = "Add Post"
+        )
       }
+    }
   ) {
     Box {
       LazyColumn(
-          contentPadding = PaddingValues(horizontal = 16.dp),
-          modifier = Modifier
-              .fillMaxWidth()
-              .padding(it)
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(it)
       ) {
         item {
           TopAppBar(
-              title = { Text("Opinionator") },
-              colors = TopAppBarDefaults.topAppBarColors(
-                  containerColor = Color.Transparent,
-              )
+            title = { Text("Opinionator") },
+            colors = TopAppBarDefaults.topAppBarColors(
+              containerColor = Color.Transparent,
+            )
           )
         }
         for (post in posts) {
@@ -132,10 +121,10 @@ private fun PopulatedFeed(posts: List<Post>) {
       }
       if (isShowingPostInput) {
         AddPost(
-            onDoneClicked = {
-              isShowingPostInput = false
-              viewModel.addPost(it)
-            }
+          onDoneClicked = {
+            isShowingPostInput = false
+            viewModel.addPost(it)
+          }
         )
       }
     }
@@ -145,10 +134,11 @@ private fun PopulatedFeed(posts: List<Post>) {
 @Composable
 private fun LoadingFeed() {
   Box(
-      contentAlignment = Alignment.Center,
-      modifier = Modifier
-          .fillMaxWidth()
-          .fillMaxHeight()) {
+    contentAlignment = Alignment.Center,
+    modifier = Modifier
+      .fillMaxWidth()
+      .fillMaxHeight()
+  ) {
     CircularProgressIndicator()
   }
 }
@@ -165,13 +155,16 @@ private fun Post(post: Post) {
 @Composable
 private fun PostBody(post: Post) {
   ElevatedCard(
-      shape = RoundedCornerShape(4.dp),
-      elevation = CardDefaults.elevatedCardElevation(8.dp),
-      modifier = Modifier.fillMaxWidth()) {
+    shape = RoundedCornerShape(4.dp),
+    elevation = CardDefaults.elevatedCardElevation(8.dp),
+    modifier = Modifier.fillMaxWidth()
+  ) {
     Box(contentAlignment = Alignment.Center) {
-      Column(modifier = Modifier
+      Column(
+        modifier = Modifier
           .padding(16.dp)
-          .fillMaxWidth()) {
+          .fillMaxWidth()
+      ) {
         Text(post.text)
         ImagePager(post.attachedImages)
         CommentBar(post)
@@ -183,15 +176,15 @@ private fun PostBody(post: Post) {
 @Composable
 private fun ProfileItem(modifier: Modifier = Modifier, user: User) {
   Row(
-      verticalAlignment = Alignment.CenterVertically,
+    verticalAlignment = Alignment.CenterVertically,
   ) {
     Image(
-        painter = painterResource(id = user.profileImage),
-        contentScale = ContentScale.Crop,
-        contentDescription = "Profile Image",
-        modifier = modifier
-            .size(48.dp)
-            .shadow(8.dp, CircleShape)
+      painter = painterResource(id = user.profileImage),
+      contentScale = ContentScale.Crop,
+      contentDescription = "Profile Image",
+      modifier = modifier
+        .size(48.dp)
+        .shadow(8.dp, CircleShape)
     )
     Text(text = user.userName, modifier = Modifier.padding(start = 16.dp))
   }
