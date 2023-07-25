@@ -34,29 +34,22 @@
 
 package com.kodeco.android.opinionator.feed
 
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.kodeco.android.opinionator.models.Post
 import com.kodeco.android.opinionator.R
+import com.kodeco.android.opinionator.models.Post
 
 @Composable
 fun CommentBar(post: Post) {
@@ -64,29 +57,30 @@ fun CommentBar(post: Post) {
   val viewModel: FeedViewModel = viewModel()
 
   Row(
-      verticalAlignment = Alignment.CenterVertically,
-      modifier = Modifier.padding(top = 8.dp)) {
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = Modifier.padding(top = 8.dp)
+  ) {
     Image(
-        painter = painterResource(id = likeImage),
-        contentDescription = "Favorite",
-        colorFilter = ColorFilter.tint(Color.Black),
-        modifier = Modifier
-            .size(16.dp)
-            .clickable {
-              viewModel.postLiked(post)
-            }
+      painter = painterResource(id = likeImage),
+      contentDescription = "Favorite",
+      colorFilter = ColorFilter.tint(Color.Black),
+      modifier = Modifier
+        .size(16.dp)
+        .clickable {
+          viewModel.postLiked(post)
+        }
     )
     Text(
-        text = "${post.likes}",
-        modifier = Modifier.padding(start = 4.dp)
+      text = "${post.likes}",
+      modifier = Modifier.padding(start = 4.dp)
     )
     Image(
-        painter = painterResource(id = R.drawable.comment),
-        contentDescription = "Comment",
-        modifier = Modifier
-            .padding(start = 16.dp)
-            .size(16.dp),
-        colorFilter = ColorFilter.tint(Color.Black),
+      painter = painterResource(id = R.drawable.comment),
+      contentDescription = "Comment",
+      modifier = Modifier
+        .padding(start = 16.dp)
+        .size(16.dp),
+      colorFilter = ColorFilter.tint(Color.Black),
     )
     Text("${post.comments}", modifier = Modifier.padding(start = 4.dp))
   }

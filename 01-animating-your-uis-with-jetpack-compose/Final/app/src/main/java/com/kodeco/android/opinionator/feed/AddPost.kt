@@ -63,34 +63,34 @@ import com.kodeco.android.opinionator.theme.darkTransparent
 @Composable
 fun AddPost(onDoneClicked: (String) -> Unit) {
   Box(
-      contentAlignment = Alignment.Center,
-      modifier = Modifier
-          .fillMaxHeight()
-          .fillMaxWidth()
-          .background(darkTransparent)
-          .padding(horizontal = 16.dp)
+    contentAlignment = Alignment.Center,
+    modifier = Modifier
+      .fillMaxHeight()
+      .fillMaxWidth()
+      .background(darkTransparent)
+      .padding(horizontal = 16.dp)
   ) {
     var postText by remember { mutableStateOf("") }
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
       Text(
-          "Add your opinion here!",
-          style = TextStyle(Color.White, fontWeight = FontWeight.Bold),
-          modifier = Modifier.padding(bottom = 8.dp)
+        "Add your opinion here!",
+        style = TextStyle(Color.White, fontWeight = FontWeight.Bold),
+        modifier = Modifier.padding(bottom = 8.dp)
       )
       Card {
         TextField(
-            value = postText,
-            onValueChange = { value: String ->
-              postText = value
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = {
-              onDoneClicked(postText)
-            }),
-            modifier = Modifier
-                .background(Color.White)
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = 50.dp)
+          value = postText,
+          onValueChange = { value: String ->
+            postText = value
+          },
+          keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+          keyboardActions = KeyboardActions(onDone = {
+            onDoneClicked(postText)
+          }),
+          modifier = Modifier
+            .background(Color.White)
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = 50.dp)
         )
       }
     }
