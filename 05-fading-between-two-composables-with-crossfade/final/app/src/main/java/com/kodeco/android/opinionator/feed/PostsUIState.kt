@@ -39,4 +39,5 @@ import com.kodeco.android.opinionator.models.Post
 data class PostsUIState(
   val isLoading: Boolean = false,
   val posts: List<Post> = emptyList(),
+  val feedScreenShowing: FeedScreenShowing = FeedScreenShowing.Loading
 )

@@ -45,7 +45,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
+import java.util.*
 
 class FeedViewModel : ViewModel() {
   private val postsRepository: PostsRepository = PostsRepositoryImpl()
@@ -64,6 +64,7 @@ class FeedViewModel : ViewModel() {
       uiState.update {
         it.copy(
           isLoading = false,
+          feedScreenShowing = FeedScreenShowing.Feed,
           posts = postsRepository.getPosts()
         )
       }
@@ -77,6 +78,7 @@ class FeedViewModel : ViewModel() {
       uiState.update {
         it.copy(
           isLoading = false,
+          feedScreenShowing = FeedScreenShowing.Feed,
           posts = postsRepository.getPosts()
         )
       }
@@ -87,7 +89,8 @@ class FeedViewModel : ViewModel() {
     viewModelScope.launch {
       uiState.update {
         it.copy(
-          isLoading = true
+          isLoading = true,
+          feedScreenShowing = FeedScreenShowing.Loading,
         )
       }
     }
@@ -99,6 +102,7 @@ class FeedViewModel : ViewModel() {
       uiState.update {
         it.copy(
           posts = postsRepository.getPosts(),
+          feedScreenShowing = FeedScreenShowing.Feed,
           isLoading = false
         )
       }

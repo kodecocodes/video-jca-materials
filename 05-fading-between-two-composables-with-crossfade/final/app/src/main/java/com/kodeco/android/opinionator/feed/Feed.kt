@@ -35,6 +35,7 @@ package com.kodeco.android.opinionator.feed
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -70,16 +71,23 @@ fun FeedScreen() {
   Feed()
 }
 
-
+enum class FeedScreenShowing {
+  Loading,
+  Feed
+}
 @Composable
 private fun Feed() {
   val viewModel = viewModel<FeedViewModel>()
   val uiState by viewModel.uiState.collectAsState()
   viewModel.getPosts()
-  if (uiState.isLoading) {
-    LoadingFeed()
-  } else {
-    PopulatedFeed(uiState.posts)
+  Crossfade(
+    targetState = uiState.feedScreenShowing,
+    animationSpec = tween(durationMillis = 800)
+  ) { state ->
+    when (state) {
+      FeedScreenShowing.Loading -> LoadingFeed()
+      FeedScreenShowing.Feed -> PopulatedFeed(posts = uiState.posts)
+    }
   }
 }
 
