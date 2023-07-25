@@ -38,15 +38,19 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -69,6 +73,7 @@ fun ImagePager(images: List<Int>) {
             .fillMaxWidth()
             .fillMaxHeight()
             .padding(8.dp)
+            .animatePageChange(pagerState)
         )
       }
       Row(
@@ -97,4 +102,19 @@ fun PagerIndicator(color: Color) {
       .size(10.dp)
 
   )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+private fun Modifier.animatePageChange(pagerState: PagerState): Modifier {
+  return graphicsLayer {
+    val pageOffset = pagerState.currentPageOffsetFraction.absoluteValue
+    // We animate the scaleX + scaleY, between 85% and 100%
+    val scale = lerp(
+      start = 0.85f,
+      stop = 1f,
+      fraction = 1f - pageOffset
+    )
+    scaleX = scale
+    scaleY = scale
+  }
 }
