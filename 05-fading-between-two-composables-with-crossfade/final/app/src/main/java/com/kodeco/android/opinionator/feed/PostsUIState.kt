@@ -32,12 +32,11 @@
  * THE SOFTWARE.
  */
 
-package com.kodeco.android.opinionator.data
+package com.kodeco.android.opinionator.feed
 
 import com.kodeco.android.opinionator.models.Post
 
-class CreatePostUseCase {
-  fun createPost(post: Post) {
-    PostData.posts = listOf(post) + PostData.posts
-  }
-}
+data class PostsUIState(
+  val isLoading: Boolean = false,
+  val posts: List<Post> = emptyList(),
+)
