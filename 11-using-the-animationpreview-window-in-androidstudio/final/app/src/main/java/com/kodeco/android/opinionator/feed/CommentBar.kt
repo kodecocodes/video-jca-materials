@@ -47,8 +47,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -62,10 +64,13 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kodeco.android.opinionator.R
 import com.kodeco.android.opinionator.models.Post
+import com.kodeco.android.opinionator.models.User
+import java.util.UUID
 
 @Composable
 fun CommentBar(post: Post) {
@@ -177,3 +182,24 @@ data class LikeCountAnimation(
   val translation: Float,
   val finished: Boolean
 )
+
+@Preview
+@Composable
+private fun LikeCountPreview() {
+  val post = Post(
+    UUID.randomUUID(),
+    "Test",
+    User(R.drawable.person, "Test"),
+    100,
+    100,
+    false
+  )
+  Box(
+    contentAlignment = Alignment.Center,
+    modifier = Modifier
+      .width(200.dp)
+      .height(200.dp)
+  ) {
+    LikeCount(post)
+  }
+}
