@@ -114,8 +114,32 @@ fun CommentBar(post: Post) {
 
 @Composable
 private fun LikeCount(post: Post) {
-  val state = remember(post.likes) { MutableTransitionState(LikeAnimationState.Started) }
+  val likeCountAnimation = useLikeCountAnimation(likes = post.likes)
+  val previousLikeCount = remember { mutableStateOf(post.likes) }
+  if (likeCountAnimation.finished) {
+    previousLikeCount.value = post.likes
+  }
+  Box(modifier = Modifier.padding(start = 4.dp)) {
+    Text(
+      text = "${post.likes}",
+      modifier = Modifier
+    )
+    Text(
+      text = "${previousLikeCount.value}",
+      modifier = Modifier
+        .graphicsLayer(
+          translationY = likeCountAnimation.translation,
+          alpha = likeCountAnimation.alpha
+        )
+    )
+  }
+}
+
+@Composable
+private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
+  val state = remember(likes) { MutableTransitionState(LikeAnimationState.Started) }
   state.targetState = LikeAnimationState.Ended
+
   val transition = updateTransition(state, label = "Like Count Transition")
   val translation by transition.animateDp(
     label = "Translation",
@@ -134,27 +158,18 @@ private fun LikeCount(post: Post) {
       LikeAnimationState.Ended -> 0.0f
     }
   }
-  val previousLikeCount = remember { mutableStateOf(post.likes) }
-  if (transition.currentState == transition.targetState) {
-    previousLikeCount.value = post.likes
-  }
-  Box(modifier = Modifier.padding(start = 4.dp)) {
-    Text(
-      text = "${post.likes}",
-      modifier = Modifier
-    )
-    Text(
-      text = "${previousLikeCount.value}",
-      modifier = Modifier
-        .graphicsLayer(
-          translationY = translationPx,
-          alpha = alpha
-        )
-    )
-  }
+
+  val isFinished = transition.currentState == transition.targetState
+  return LikeCountAnimation(alpha, translationPx, isFinished)
 }
 
 private enum class LikeAnimationState {
   Started,
   Ended
 }
+
+data class LikeCountAnimation(
+  val alpha: Float,
+  val translation: Float,
+  val finished: Boolean
+)
