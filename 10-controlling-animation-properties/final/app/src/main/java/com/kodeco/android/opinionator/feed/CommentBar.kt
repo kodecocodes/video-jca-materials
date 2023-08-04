@@ -153,8 +153,8 @@ private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
     }
   }
   val translationPx = with(LocalDensity.current) { translation.toPx() }
-  val alpha by transition.animateFloat(
-    label = "Alpha",
+  val alphaAnimation by transition.animateFloat(
+    label = "Alpha Animation",
     transitionSpec = { spring(stiffness = Spring.StiffnessLow) }
   ) { animationState ->
     when (animationState) {
@@ -164,7 +164,7 @@ private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
   }
 
   val isFinished = transition.currentState == transition.targetState
-  return LikeCountAnimation(alpha, translationPx, isFinished)
+  return LikeCountAnimation(alphaAnimation, translationPx, isFinished)
 }
 
 private enum class LikeAnimationState {
