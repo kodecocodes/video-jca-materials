@@ -126,8 +126,8 @@ private fun LikeCount(post: Post) {
     }
   }
   val translationPx = with(LocalDensity.current) { translation.toPx() }
-  val alpha by transition.animateFloat(
-    label = "Alpha",
+  val alphaAnimation by transition.animateFloat(
+    label = "Alpha Animation",
   ) { animationState ->
     when (animationState) {
       LikeAnimationState.Started -> 1f
@@ -148,7 +148,7 @@ private fun LikeCount(post: Post) {
       modifier = Modifier
         .graphicsLayer(
           translationY = translationPx,
-          alpha = alpha
+          alpha = alphaAnimation
         )
     )
   }
