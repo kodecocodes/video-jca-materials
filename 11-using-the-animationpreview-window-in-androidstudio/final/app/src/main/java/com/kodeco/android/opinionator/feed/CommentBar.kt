@@ -159,7 +159,7 @@ private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
   }
   val translationPx = with(LocalDensity.current) { translation.toPx() }
   val alpha by transition.animateFloat(
-    label = "Alpha",
+    label = "Alpha Animation",
     transitionSpec = { spring(stiffness = Spring.StiffnessLow) }
   ) { animationState ->
     when (animationState) {
@@ -183,7 +183,7 @@ data class LikeCountAnimation(
   val finished: Boolean
 )
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun LikeCountPreview() {
   val post = Post(
