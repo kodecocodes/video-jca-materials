@@ -102,7 +102,7 @@ enum class HeartAnimationState {
   Shown
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun HeartImagePreview() {
   val state = remember { mutableStateOf(HeartAnimationState.Hidden) }
