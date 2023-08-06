@@ -70,7 +70,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kodeco.android.opinionator.R
 import com.kodeco.android.opinionator.models.Post
 import com.kodeco.android.opinionator.models.User
-import java.util.UUID
+import java.util.*
 
 @Composable
 fun CommentBar(post: Post, onPostLiked: () -> Unit) {
@@ -159,8 +159,8 @@ private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
     }
   }
   val translationPx = with(LocalDensity.current) { translation.toPx() }
-  val alpha by transition.animateFloat(
-    label = "Alpha",
+  val alphaAnimation by transition.animateFloat(
+    label = "Alpha Animation",
     transitionSpec = { spring(stiffness = Spring.StiffnessLow) }
   ) { animationState ->
     when (animationState) {
@@ -170,7 +170,7 @@ private fun useLikeCountAnimation(likes: Int): LikeCountAnimation {
   }
 
   val isFinished = transition.currentState == transition.targetState
-  return LikeCountAnimation(alpha, translationPx, isFinished)
+  return LikeCountAnimation(alphaAnimation, translationPx, isFinished)
 }
 
 private enum class LikeAnimationState {
@@ -184,7 +184,7 @@ data class LikeCountAnimation(
   val finished: Boolean
 )
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun LikeCountPreview() {
   val post = Post(
