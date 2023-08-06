@@ -34,9 +34,11 @@
 package com.kodeco.android.opinionator.feed
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -60,6 +62,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kodeco.android.opinionator.R
@@ -194,6 +197,14 @@ private fun PostBody(post: Post) {
 
 @Composable
 private fun ProfileItem(modifier: Modifier = Modifier, user: User) {
+  var expandImage by remember { mutableStateOf(false) }
+
+  val animatedSizeDp: Dp by animateDpAsState(
+    targetValue = if (expandImage) 200.dp else 48.dp,
+    animationSpec = tween(durationMillis = 500),
+    label = "Profile Image Animation"
+  )
+
   Row(
     verticalAlignment = Alignment.CenterVertically,
   ) {
@@ -202,8 +213,11 @@ private fun ProfileItem(modifier: Modifier = Modifier, user: User) {
       contentScale = ContentScale.Crop,
       contentDescription = "Profile Image",
       modifier = modifier
-        .size(48.dp)
+        .size(animatedSizeDp)
         .shadow(8.dp, CircleShape)
+        .clickable {
+          expandImage = !expandImage
+        }
     )
     Text(text = user.userName, modifier = Modifier.padding(start = 16.dp))
   }
